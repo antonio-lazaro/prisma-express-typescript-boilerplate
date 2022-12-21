@@ -1,4 +1,3 @@
-import * as s from 'superstruct';
 import httpStatus from 'http-status';
 import ApiError from '../utils/ApiError';
 import { NextFunction, Request, Response } from 'express';
