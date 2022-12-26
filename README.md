@@ -98,6 +98,9 @@ Database:
 ```bash
 # push changes to db
 yarn db:push
+
+# start prisma studio
+yarn db:studio
 ```
 
 Docker:
