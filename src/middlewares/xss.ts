@@ -6,17 +6,17 @@ import { inHTMLData } from 'xss-filters';
  * @param {string/object} data - The value to sanitize
  * @return {string/object} The sanitized value
  */
-export const clean = (data: any = ''): any => {
+export const clean = <T>(data: T | string = ''): T => {
   let isObject = false;
   if (typeof data === 'object') {
     data = JSON.stringify(data);
     isObject = true;
   }
 
-  data = inHTMLData(data).trim();
+  data = inHTMLData(data as string).trim();
   if (isObject) data = JSON.parse(data);
 
-  return data;
+  return data as T;
 };
 
 const middleware = () => {

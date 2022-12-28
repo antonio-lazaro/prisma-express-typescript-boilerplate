@@ -3,7 +3,6 @@ import httpStatus from 'http-status';
 import prisma from '../client';
 import ApiError from '../utils/ApiError';
 import { encryptPassword } from '../utils/encryption';
-import pick from '../utils/pick';
 
 /**
  * Create a user

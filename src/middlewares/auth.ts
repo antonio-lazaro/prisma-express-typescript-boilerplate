@@ -9,10 +9,10 @@ const verifyCallback =
   (
     req: Request,
     resolve: (value?: unknown) => void,
-    reject: (reason?: any) => void,
+    reject: (reason?: unknown) => void,
     requiredRights: string[]
   ) =>
-  async (err: any, user: User | false, info: any) => {
+  async (err: unknown, user: User | false, info: unknown) => {
     if (err || info || !user) {
       return reject(new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate'));
     }

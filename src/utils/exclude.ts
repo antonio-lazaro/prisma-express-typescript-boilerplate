@@ -5,7 +5,7 @@
  * @returns
  */
 const exclude = <Type, Key extends keyof Type>(obj: Type, keys: Key[]): Omit<Type, Key> => {
-  for (let key of keys) {
+  for (const key of keys) {
     delete obj[key];
   }
   return obj;
