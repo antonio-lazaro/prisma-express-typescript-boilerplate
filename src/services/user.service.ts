@@ -1,4 +1,4 @@
-import { User, Role } from '@prisma/client';
+import { User, Role, Prisma } from '@prisma/client';
 import httpStatus from 'http-status';
 import prisma from '../client';
 import ApiError from '../utils/ApiError';
@@ -46,13 +46,18 @@ const queryUsers = async (
     sortBy?: string;
     sortType?: 'asc' | 'desc';
   }
-): Promise<User[]> => {
+): Promise<Omit<User, 'role' | 'password' | 'isEmailVerified' | 'createdAt' | 'updatedAt'>[]> => {
   const page = options.page ?? 1;
   const limit = options.limit ?? 10;
   const sortBy = options.sortBy;
   const sortType = options.sortType ?? 'desc';
   const users = await prisma.user.findMany({
     where: filter,
+    select: {
+      id: true,
+      email: true,
+      name: true
+    },
     skip: page * limit,
     take: limit,
     orderBy: sortBy ? { [sortBy]: sortType } : undefined
@@ -65,8 +70,11 @@ const queryUsers = async (
  * @param {ObjectId} id
  * @returns {Promise<User | null>}
  */
-const getUserById = async (id: number): Promise<User | null> => {
-  return prisma.user.findUnique({ where: { id } });
+const getUserById = async (
+  id: number,
+  select: Prisma.UserSelect = { id: true, email: true, name: true, role: true }
+) => {
+  return prisma.user.findUnique({ where: { id }, select });
 };
 
 /**
@@ -74,8 +82,11 @@ const getUserById = async (id: number): Promise<User | null> => {
  * @param {string} email
  * @returns {Promise<User | null>}
  */
-const getUserByEmail = async (email: string): Promise<User | null> => {
-  return prisma.user.findUnique({ where: { email } });
+const getUserByEmail = async (
+  email: string,
+  select: Prisma.UserSelect = { id: true, email: true, name: true, role: true }
+) => {
+  return prisma.user.findUnique({ where: { email }, select });
 };
 
 /**
@@ -84,9 +95,8 @@ const getUserByEmail = async (email: string): Promise<User | null> => {
  * @param {Object} updateBody
  * @returns {Promise<User>}
  */
-const updateUserById = async (userId: number, updateBody: any): Promise<User> => {
-  const user = await getUserById(userId);
-  updateBody = pick(updateBody, ['email', 'name']);
+const updateUserById = async (userId: number, updateBody: User) => {
+  const user = await getUserById(userId, { id: true, email: true, name: true });
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
@@ -96,7 +106,7 @@ const updateUserById = async (userId: number, updateBody: any): Promise<User> =>
   Object.assign(user, updateBody);
   await prisma.user.update({
     where: { id: user.id },
-    data: user
+    data: updateBody
   });
   return user;
 };
@@ -106,7 +116,7 @@ const updateUserById = async (userId: number, updateBody: any): Promise<User> =>
  * @param {ObjectId} userId
  * @returns {Promise<User>}
  */
-const deleteUserById = async (userId: number): Promise<User> => {
+const deleteUserById = async (userId: number) => {
   const user = await getUserById(userId);
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');

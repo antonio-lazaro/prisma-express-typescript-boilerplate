@@ -6,6 +6,7 @@ import userService from './user.service';
 import ApiError from '../utils/ApiError';
 import { Token, TokenType } from '@prisma/client';
 import prisma from '../client';
+import { AuthTokensResponse } from '../types/response';
 
 /**
  * Generate token
@@ -20,7 +21,7 @@ const generateToken = (
   expires: Moment,
   type: TokenType,
   secret = config.jwt.secret
-) => {
+): string => {
   const payload = {
     sub: userId,
     iat: moment().unix(),
@@ -45,7 +46,7 @@ const saveToken = async (
   expires: Moment,
   type: TokenType,
   blacklisted = false
-) => {
+): Promise<Token> => {
   const createdToken = prisma.token.create({
     data: {
       token,
@@ -66,7 +67,7 @@ const saveToken = async (
  */
 const verifyToken = async (token: string, type: TokenType): Promise<Token> => {
   const payload = jwt.verify(token, config.jwt.secret);
-  const userId: number = Number(payload.sub);
+  const userId = Number(payload.sub);
   const tokenData = await prisma.token.findFirst({
     where: { token, type, userId, blacklisted: false }
   });
@@ -79,9 +80,9 @@ const verifyToken = async (token: string, type: TokenType): Promise<Token> => {
 /**
  * Generate auth tokens
  * @param {User} user
- * @returns {Promise<Object>}
+ * @returns {Promise<AuthTokensResponse>}
  */
-const generateAuthTokens = async (user: { id: number }): Promise<object> => {
+const generateAuthTokens = async (user: { id: number }): Promise<AuthTokensResponse> => {
   const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'minutes');
   const accessToken = generateToken(user.id, accessTokenExpires, TokenType.ACCESS);
 

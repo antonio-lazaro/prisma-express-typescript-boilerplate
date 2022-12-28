@@ -5,6 +5,7 @@ import ApiError from '../utils/ApiError';
 import { TokenType, User } from '@prisma/client';
 import prisma from '../client';
 import { encryptPassword, isPasswordMatch } from '../utils/encryption';
+import { AuthTokensResponse } from '../types/response';
 
 /**
  * Login with username and password
@@ -13,7 +14,12 @@ import { encryptPassword, isPasswordMatch } from '../utils/encryption';
  * @returns {Promise<User>}
  */
 const loginUserWithEmailAndPassword = async (email: string, password: string): Promise<User> => {
-  const user = await userService.getUserByEmail(email);
+  const user = await userService.getUserByEmail(email, {
+    id: true,
+    email: true,
+    name: true,
+    password: true
+  });
   if (!user || !(await isPasswordMatch(password, user.password))) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
   }
@@ -23,9 +29,9 @@ const loginUserWithEmailAndPassword = async (email: string, password: string): P
 /**
  * Logout
  * @param {string} refreshToken
- * @returns {Promise}
+ * @returns {Promise<void>}
  */
-const logout = async (refreshToken: string): Promise<any> => {
+const logout = async (refreshToken: string): Promise<void> => {
   const refreshTokenData = await prisma.token.findFirst({
     where: {
       token: refreshToken,
@@ -42,9 +48,9 @@ const logout = async (refreshToken: string): Promise<any> => {
 /**
  * Refresh auth tokens
  * @param {string} refreshToken
- * @returns {Promise<Object>}
+ * @returns {Promise<AuthTokensResponse>}
  */
-const refreshAuth = async (refreshToken: string): Promise<object> => {
+const refreshAuth = async (refreshToken: string): Promise<AuthTokensResponse> => {
   try {
     const refreshTokenData = await tokenService.verifyToken(refreshToken, TokenType.REFRESH);
     const { userId } = refreshTokenData;
@@ -59,9 +65,9 @@ const refreshAuth = async (refreshToken: string): Promise<object> => {
  * Reset password
  * @param {string} resetPasswordToken
  * @param {string} newPassword
- * @returns {Promise}
+ * @returns {Promise<void>}
  */
-const resetPassword = async (resetPasswordToken: string, newPassword: string): Promise<any> => {
+const resetPassword = async (resetPasswordToken: string, newPassword: string): Promise<void> => {
   try {
     const resetPasswordTokenData = await tokenService.verifyToken(
       resetPasswordToken,
@@ -81,9 +87,9 @@ const resetPassword = async (resetPasswordToken: string, newPassword: string): P
 /**
  * Verify email
  * @param {string} verifyEmailToken
- * @returns {Promise}
+ * @returns {Promise<void>}
  */
-const verifyEmail = async (verifyEmailToken: string): Promise<any> => {
+const verifyEmail = async (verifyEmailToken: string): Promise<void> => {
   try {
     const verifyEmailTokenData = await tokenService.verifyToken(
       verifyEmailToken,

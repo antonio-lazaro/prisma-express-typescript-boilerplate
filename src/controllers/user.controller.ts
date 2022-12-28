@@ -3,6 +3,7 @@ import pick from '../utils/pick';
 import ApiError from '../utils/ApiError';
 import catchAsync from '../utils/catchAsync';
 import { userService } from '../services';
+import exclude from '../utils/exclude';
 
 const createUser = catchAsync(async (req, res) => {
   const { email, password, name, role } = req.body;
@@ -27,7 +28,8 @@ const getUser = catchAsync(async (req, res) => {
 
 const updateUser = catchAsync(async (req, res) => {
   const user = await userService.updateUserById(req.params.userId, req.body);
-  res.send(user);
+  const userWithoutPassword = exclude(user, ['password']);
+  res.send(userWithoutPassword);
 });
 
 const deleteUser = catchAsync(async (req, res) => {
