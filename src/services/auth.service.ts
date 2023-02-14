@@ -6,24 +6,32 @@ import { TokenType, User } from '@prisma/client';
 import prisma from '../client';
 import { encryptPassword, isPasswordMatch } from '../utils/encryption';
 import { AuthTokensResponse } from '../types/response';
+import exclude from '../utils/exclude';
 
 /**
  * Login with username and password
  * @param {string} email
  * @param {string} password
- * @returns {Promise<User>}
+ * @returns {Promise<Omit<User, 'password'>>}
  */
-const loginUserWithEmailAndPassword = async (email: string, password: string): Promise<User> => {
-  const user = await userService.getUserByEmail(email, {
-    id: true,
-    email: true,
-    name: true,
-    password: true
-  });
-  if (!user || !(await isPasswordMatch(password, user.password))) {
+const loginUserWithEmailAndPassword = async (
+  email: string,
+  password: string
+): Promise<Omit<User, 'password'>> => {
+  const user = await userService.getUserByEmail(email, [
+    'id',
+    'email',
+    'name',
+    'password',
+    'role',
+    'isEmailVerified',
+    'createdAt',
+    'updatedAt'
+  ]);
+  if (!user || !(await isPasswordMatch(password, user.password as string))) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
   }
-  return user;
+  return exclude(user, ['password']);
 };
 
 /**
@@ -77,7 +85,8 @@ const resetPassword = async (resetPasswordToken: string, newPassword: string): P
     if (!user) {
       throw new Error();
     }
-    await userService.updateUserById(user.id, { password: encryptPassword(newPassword) });
+    const encryptedPassword = await encryptPassword(newPassword);
+    await userService.updateUserById(user.id, { password: encryptedPassword });
     await prisma.token.deleteMany({ where: { userId: user.id, type: TokenType.RESET_PASSWORD } });
   } catch (error) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Password reset failed');
