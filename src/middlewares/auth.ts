@@ -7,7 +7,7 @@ import { User } from '@prisma/client';
 
 const verifyCallback =
   (
-    req: Request,
+    req: any,
     resolve: (value?: unknown) => void,
     reject: (reason?: unknown) => void,
     requiredRights: string[]
@@ -23,7 +23,7 @@ const verifyCallback =
       const hasRequiredRights = requiredRights.every((requiredRight) =>
         userRights.includes(requiredRight)
       );
-      if (!hasRequiredRights && req.params.userId !== user.id.toString()) {
+      if (!hasRequiredRights && req.params.userId !== user.id) {
         return reject(new ApiError(httpStatus.FORBIDDEN, 'Forbidden'));
       }
     }
