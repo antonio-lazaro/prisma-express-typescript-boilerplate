@@ -114,6 +114,12 @@ yarn docker:prod
 
 # run all tests in a docker container
 yarn docker:test
+
+# run docker container with PostgreSQL db
+yarn docker:dev-db:start
+
+# stop docker container with PostgreSQL db
+yarn docker:dev-db:stop
 ```
 
 Linting:

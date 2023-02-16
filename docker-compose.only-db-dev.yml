@@ -4,6 +4,7 @@ services:
   db:
     image: postgres
     restart: always
+    container_name: postgresdb-util-dev
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=secret
