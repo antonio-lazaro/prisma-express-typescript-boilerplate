@@ -1,0 +1,17 @@
+
+version: '3.8'
+services:
+  db:
+    image: postgres
+    restart: always
+    container_name: postgresdb-util-test
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=secret
+    ports:
+      - '5432:5432'
+    volumes: 
+      - db:/var/lib/postgresql/data
+volumes:
+  db:
+    driver: local
