@@ -18,4 +18,4 @@ coverage
 db
 
 # TypeScript
-dist
+build
