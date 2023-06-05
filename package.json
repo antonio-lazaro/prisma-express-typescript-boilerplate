@@ -6,21 +6,7 @@
   "repository": "https://github.com/antonio-lazaro/prisma-express-typescript-boilerplate.git",
   "scripts": {
     "start": "yarn build && pm2 start ecosystem.config.json --no-daemon",
-    "dev": "cross-env NODE_ENV=development nodemon src/index.ts",
-    "test": "docker-compose -f docker-compose.only-db-test.yml up -d && yarn db:push && jest -i --colors --verbose --detectOpenHandles && docker-compose -f docker-compose.only-db-test.yml down",
-    "test:watch": "docker-compose -f docker-compose.only-db-test.yml up -d && yarn db:push && jest -i --watchAll && docker-compose -f docker-compose.only-db-test.yml down",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "prettier": "prettier --check **/*.ts",
-    "prettier:fix": "prettier --write **/*.ts",
-    "db:push": "prisma db push",
-    "db:studio": "prisma studio",
-    "docker:prod": "docker-compose -f docker-compose.yml -f docker-compose.prod.yml up",
-    "docker:dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up",
-    "docker:test": "docker-compose -f docker-compose.yml -f docker-compose.test.yml up",
-    "docker:dev-db:start": "docker-compose -f docker-compose.only-db-dev.yml up -d",
-    "docker:dev-db:stop": "docker-compose -f docker-compose.only-db-dev.yml down",
-    "prepare": "husky install",
+  
     "build": "rimraf build && tsc -p tsconfig.json"
   },
   "keywords": [
