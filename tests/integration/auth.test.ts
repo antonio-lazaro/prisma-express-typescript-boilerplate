@@ -317,7 +317,9 @@ describe('Auth routes', () => {
     test('should return 204 and send reset password email to the user', async () => {
       await insertUsers([userOne]);
       const dbUserOne = (await prisma.user.findUnique({ where: { email: userOne.email } })) as User;
-      const sendResetPasswordEmailSpy = jest.spyOn(emailService, 'sendResetPasswordEmail');
+      const sendResetPasswordEmailSpy = jest
+        .spyOn(emailService, 'sendResetPasswordEmail')
+        .mockImplementationOnce(() => new Promise((resolve) => resolve()));
 
       await request(app)
         .post('/v1/auth/forgot-password')
@@ -511,7 +513,9 @@ describe('Auth routes', () => {
     test('should return 204 and send verification email to the user', async () => {
       await insertUsers([userOne]);
       const dbUserOne = (await prisma.user.findUnique({ where: { email: userOne.email } })) as User;
-      const sendVerificationEmailSpy = jest.spyOn(emailService, 'sendVerificationEmail');
+      const sendVerificationEmailSpy = jest
+        .spyOn(emailService, 'sendVerificationEmail')
+        .mockImplementationOnce(() => new Promise((resolve) => resolve()));
       const userOneAccessToken = tokenService.generateToken(
         dbUserOne.id,
         moment().add(config.jwt.accessExpirationMinutes, 'minutes'),
