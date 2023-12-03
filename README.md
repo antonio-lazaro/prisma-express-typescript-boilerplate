@@ -30,18 +30,24 @@ cp .env.example .env
 
 ## Table of Contents
 
-- [Features](#features)
-- [Commands](#commands)
-- [Environment Variables](#environment-variables)
-- [Project Structure](#project-structure)
-- [API Documentation](#api-documentation)
-- [Error Handling](#error-handling)
-- [Validation](#validation)
-- [Authentication](#authentication)
-- [Authorization](#authorization)
-- [Logging](#logging)
-- [Linting](#linting)
-- [Contributing](#contributing)
+- [RESTful API Node Server Boilerplate](#restful-api-node-server-boilerplate)
+  - [Quick Start](#quick-start)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Commands](#commands)
+  - [Environment Variables](#environment-variables)
+  - [Project Structure](#project-structure)
+  - [API Documentation](#api-documentation)
+    - [API Endpoints](#api-endpoints)
+  - [Error Handling](#error-handling)
+  - [Validation](#validation)
+  - [Authentication](#authentication)
+  - [Authorization](#authorization)
+  - [Logging](#logging)
+  - [Linting](#linting)
+  - [Contributing](#contributing)
+  - [Inspirations](#inspirations)
+  - [License](#license)
 
 ## Features
 
@@ -174,7 +180,6 @@ src\
  |--controllers\    # Route controllers (controller layer)
  |--docs\           # Swagger files
  |--middlewares\    # Custom express middlewares
- |--models\         # Mongoose models (data layer)
  |--routes\         # Routes
  |--services\       # Business logic (service layer)
  |--utils\          # Utility classes and functions
